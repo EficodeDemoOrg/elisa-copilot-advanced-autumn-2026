@@ -37,6 +37,8 @@ In the following exercises, you will learn how to:
 
 By default, VS Code discovers plugins from copilot-plugins and awesome-copilot marketplaces. You can configure additional marketplaces.
 
+**Note: Feel free to use [Elisa's own agent plugin marketplace](https://github.com/elisa-actions/agent-plugins) instead of the demo marketplace mentioned in the exercises.**
+
 **Understand the demo marketplace**
 1. Study the structure of [Eficode's demo agent plugin marketplace](https://github.com/EficodeDemoOrg/demo-agent-plugin-marketplace)
 1. Examine the marketplace configuration in the file `.github/plugin/marketplace.json`.
