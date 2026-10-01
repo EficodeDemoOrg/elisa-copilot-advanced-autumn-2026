@@ -1,0 +1,27 @@
+{
+  "name": "Gantt Chart App",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-20",
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "forwardPorts": [
+    5177,
+    3107
+  ],
+  "portsAttributes": {
+    "5177": {
+      "label": "Frontend (Vite)",
+      "onAutoForward": "notify"
+    },
+    "3107": {
+      "label": "Backend (Express)",
+      "onAutoForward": "silent"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "GitHub.copilot",
+        "GitHub.copilot-chat"
+      ]
+    }
+  }
+}

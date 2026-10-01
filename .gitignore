@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.DS_Store
+**/.logs/*.log
+backend/data/*
+!backend/data/gantt.example.json
+*.tsbuildinfo
+.env
+.env.local
+.vite/
+.playwright-mcp/
+
+
+# APM dependencies
+apm_modules/

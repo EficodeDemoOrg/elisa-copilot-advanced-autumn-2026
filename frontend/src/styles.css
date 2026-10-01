@@ -1,0 +1,448 @@
+:root {
+  /* Dark navy palette inspired by the reference Gantt chart */
+  --color-bg: #0e2a47;
+  --color-surface: #163961;
+  --color-surface-2: #1b4271;
+  --color-border: #2f6aa8;
+  --color-text: #f3f7fb;
+  --color-text-soft: #b8c8da;
+  --color-text-mute: #7e9bb8;
+
+  --color-primary: #43b5d4;
+  --color-primary-hover: #5cc4e0;
+  --color-primary-soft: rgba(67, 181, 212, 0.18);
+
+  --color-accent: #ed8a5c;
+  --color-accent-hover: #f29a72;
+  --color-accent-soft: rgba(237, 138, 92, 0.18);
+
+  --color-danger: #e87878;
+
+  --color-weekend-bg: rgba(255, 255, 255, 0.04);
+
+  /* Five-color task palette (cycled across rows) */
+  --task-color-1: #f0b34a;
+  /* amber  */
+  --task-color-2: #b8c44d;
+  /* olive  */
+  --task-color-3: #ed8a5c;
+  /* orange */
+  --task-color-4: #43b5d4;
+  /* cyan   */
+  --task-color-5: #e87878;
+  /* pink   */
+
+  /* Layout */
+  --row-height: 44px;
+  --day-width: 38px;
+  --month-height: 28px;
+  --day-row-height: 32px;
+  --header-height: calc(var(--month-height) + var(--day-row-height));
+  --label-width: 220px;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  --shadow-sm: 0 1px 2px rgba(26, 29, 41, 0.06);
+  --shadow-md: 0 6px 24px rgba(26, 29, 41, 0.08);
+
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--color-text);
+  font-feature-settings: 'cv11', 'ss01';
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at -10% -20%, rgba(67, 181, 212, 0.10) 0%, transparent 60%),
+    radial-gradient(900px 500px at 110% 0%, rgba(237, 138, 92, 0.10) 0%, transparent 55%),
+    var(--color-bg);
+  background-attachment: fixed;
+  min-height: 100vh;
+  color: var(--color-text);
+}
+
+.app {
+  padding: 32px 28px 64px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.app-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.app h1 {
+  margin: 0;
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 26px;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+
+/* Cards / panels */
+.chart-header {
+  display: flex;
+  gap: 24px;
+  align-items: flex-end;
+  margin-bottom: 18px;
+  padding: 18px 22px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.chart-header label {
+  display: flex;
+  flex-direction: column;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-soft);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  gap: 6px;
+}
+
+.chart-header input[type="date"] {
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-2);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.chart-header input[type="date"]:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+  background: var(--color-surface);
+}
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.btn {
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  background: var(--color-primary);
+  color: white;
+  border: 0;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.15s, transform 0.05s, box-shadow 0.15s;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn:hover {
+  background: var(--color-primary-hover);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn.secondary {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.btn.secondary:hover {
+  background: var(--color-surface-2);
+}
+
+.btn.danger {
+  background: var(--color-danger);
+}
+
+/* Gantt grid */
+.gantt {
+  position: relative;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: auto;
+  user-select: none;
+  box-shadow: var(--shadow-md);
+}
+
+.gantt-header,
+.gantt-row {
+  display: grid;
+  grid-template-columns: var(--label-width) 1fr;
+  min-width: max-content;
+}
+
+.gantt-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  height: var(--header-height);
+}
+
+.gantt-header .corner {
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 12px 0 16px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+}
+
+.gantt-header .add-task-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #0e2a47;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: background 0.15s, transform 0.05s;
+}
+
+.gantt-header .add-task-btn:hover {
+  background: var(--color-primary-hover);
+}
+
+.gantt-header .add-task-btn:active {
+  transform: translateY(1px);
+}
+
+.gantt-header .timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.gantt-header .months {
+  display: flex;
+  height: var(--month-height);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.gantt-header .month {
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+  letter-spacing: 0.02em;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.gantt-header .days {
+  display: flex;
+  height: var(--day-row-height);
+}
+
+.gantt-header .day {
+  width: var(--day-width);
+  flex: 0 0 var(--day-width);
+  border-right: 1px solid var(--color-border);
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+  line-height: var(--day-row-height);
+  color: var(--color-text-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.gantt-header .day.weekend {
+  background: var(--color-weekend-bg);
+  color: var(--color-text-mute);
+}
+
+.gantt-row {
+  border-bottom: 1px solid var(--color-border);
+  height: var(--row-height);
+  transition: background 0.15s;
+}
+
+.gantt-row:hover {
+  background: var(--color-surface-2);
+}
+
+.gantt-row:last-child {
+  border-bottom: 0;
+}
+
+.gantt-row .label {
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+}
+
+.gantt-row .label input {
+  flex: 1;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  outline: none;
+  cursor: text;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+
+.gantt-row .label input:hover {
+  border-color: var(--color-border);
+  background: var(--color-surface-2);
+}
+
+.gantt-row .label input:focus {
+  border-color: var(--color-primary);
+  background: var(--color-surface);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+
+.gantt-row .label .delete-btn {
+  background: transparent;
+  border: 0;
+  color: var(--color-text-mute);
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s, background 0.15s;
+}
+
+.gantt-row .label .delete-btn:hover {
+  color: var(--color-danger);
+  background: var(--color-accent-soft);
+}
+
+.gantt-row .lane {
+  position: relative;
+  background-image:
+    linear-gradient(to left, var(--color-border) 1px, transparent 1px);
+}
+
+/* Task bars: color is supplied per-row via the --task-color CSS variable */
+.task-bar {
+  position: absolute;
+  top: 7px;
+  height: calc(var(--row-height) - 14px);
+  background: var(--task-color, var(--task-color-1));
+  border-radius: 999px;
+  color: #0e2a47;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  cursor: grab;
+  touch-action: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 4px 10px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: box-shadow 0.15s, filter 0.15s;
+}
+
+.task-bar:hover {
+  filter: brightness(1.06);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 14px rgba(0, 0, 0, 0.28);
+}
+
+.task-bar.dragging {
+  cursor: grabbing;
+  filter: brightness(1.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 10px 22px rgba(0, 0, 0, 0.3);
+}
+
+.task-bar .resize-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  cursor: ew-resize;
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.15s;
+}
+
+.task-bar .resize-handle:hover {
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.task-bar .resize-handle.left {
+  left: 0;
+  border-top-left-radius: 999px;
+  border-bottom-left-radius: 999px;
+}
+
+.task-bar .resize-handle.right {
+  right: 0;
+  border-top-right-radius: 999px;
+  border-bottom-right-radius: 999px;
+}
+
+.empty-state {
+  padding: 40px 24px;
+  color: var(--color-text-mute);
+  text-align: center;
+  font-size: 14px;
+  font-style: italic;
+}
+
+.error {
+  color: var(--color-danger);
+  background: var(--color-accent-soft);
+  border: 1px solid #f5cdc1;
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
